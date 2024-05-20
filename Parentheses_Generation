@@ -1,0 +1,72 @@
+//Backtracking
+public List<String> generateParenthesis(int n) {
+        List<String> result = new ArrayList<>();
+        generateParenthesisHelper(n, n, "", result);
+        return result;
+    }
+    private void generateParenthesisHelper(int left, int right, String str, List<String> result) {
+        if (left == 0 && right == 0) {
+            result.add(str);
+            return;
+        }
+        if (left > 0) {
+            generateParenthesisHelper(left - 1, right, str + "(", result);
+        }
+        if (right > left) {
+            generateParenthesisHelper(left, right - 1, str + ")", result);
+        }
+    }
+
+//Dynamic Programming
+public List<String> generateParenthesis(int n) {
+        List<List<String>> dp = new ArrayList<>();
+        for (int i = 0; i <= n; i++) {
+            dp.add(new ArrayList<>());
+        }
+        dp.get(0).add("");
+        dp.get(1).add("()");
+        for (int i = 2; i <= n; i++) {
+            for (int j = 0; j < i; j++) {
+                for (String s1 : dp.get(j)) {
+                    String s4 = "(" + s1;
+                    for (String s2 : dp.get(i - 1 - j)) {
+                        String s3 = s4 + ")" + s2;
+                        dp.get(i).add(s3);
+                    }
+                }
+            }
+        }
+        return dp.get(n);
+    }
+
+    //Brute-force search
+    public List<String>generateParenthesis(int n) {
+        List<String> result = new ArrayList<>();
+        generateAllValidParentheses("", n * 2, result);
+        return result;
+    }
+    private void generateAllValidParentheses(String str, int n, List<String>result) {
+        if (n == 0) {
+            if (isValid(str)) {
+                result.add(str);
+            }
+            return;
+        }
+        generateAllValidParentheses(str + "(", n - 1, result);
+        generateAllValidParentheses(str + ")", n - 1, result);
+    }
+    private boolean isValid(String str) {
+        int balance = 0;
+        for (char ch : str.toCharArray()) {
+            if (ch == '(') {
+                balance++;
+            } else if (ch == ')') {
+                balance--;
+            }
+            if (balance < 0) {
+                return false; // More ')' than '('
+            }
+        }
+        return balance == 0; // Equal number of '(' and ')'
+    }    
+
